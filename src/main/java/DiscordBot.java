@@ -10,7 +10,6 @@ import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import javax.security.auth.login.LoginException;
 import java.util.Collections;
 import java.util.List;
-import java.util.ListIterator;
 
 public class DiscordBot extends ListenerAdapter{
 
