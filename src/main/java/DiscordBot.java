@@ -8,26 +8,45 @@ import net.dv8tion.jda.core.exceptions.RateLimitedException;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
 import javax.security.auth.login.LoginException;
+import java.io.*;
 import java.util.Collections;
 import java.util.List;
+import java.util.Scanner;
 
 public class DiscordBot extends ListenerAdapter{
 
     private static JDA jda = null;
     private static List<TextChannel> textChannels;
     private static MessageChannel channelBotLog;
+    private static String key;
+    private static File file = new File("Keys.txt");
+    private final static int EXEPCTION_KEY = 0;
+    private final static int DISCORD_KEY = 1;
+    private final static int YOUTUBE_KEY = 2;
 
     public static void main(String[] args) throws
             LoginException, RateLimitedException, InterruptedException {
-        jda = new JDABuilder(AccountType.BOT)
-                .setToken("MzU2Njg0NTk4MTMxODE4NDk2.DJe8AQ.xa8Am4JbSu5X2lEjztkLHMKWoPU")
-                .addEventListener(new DiscordBot())
-                .buildBlocking();
 
-        textChannels = jda.getTextChannels();
-        channelBotLog = textChannels.get(0);
+        try{
+            jda = new JDABuilder(AccountType.BOT)
+                    .setToken(createToken(DISCORD_KEY))
+                    .addEventListener(new DiscordBot())
+                    .buildBlocking();
+
+            textChannels = jda.getTextChannels();
+            channelBotLog = textChannels.get(0);
+        } catch (Exception e){
+            createToken(EXEPCTION_KEY);
+
+            jda = new JDABuilder(AccountType.BOT)
+                    .setToken(createToken(DISCORD_KEY))
+                    .addEventListener(new DiscordBot())
+                    .buildBlocking();
+
+            textChannels = jda.getTextChannels();
+            channelBotLog = textChannels.get(0);
+        }
     }
-
 
     @Override
     public void onReady(ReadyEvent event) {
@@ -55,9 +74,6 @@ public class DiscordBot extends ListenerAdapter{
             PrivateChannel privateChannel = author.openPrivateChannel().complete();
             privateChannel.sendMessage("Private Message").complete();
         }
-        if(msg.equals("!pokeempi")){
-            channel.sendMessage("@empi#6165 poke").complete();
-        }
         if (msg.startsWith("!log")){
             try {
                 StringBuilder stringBuilder = new StringBuilder();
@@ -78,5 +94,57 @@ public class DiscordBot extends ListenerAdapter{
                 channel.sendMessage("```Please enter the Correct Command:\n\n!log 'amount'```").complete();
             }
         }
+    }
+
+
+
+    private static String createToken(int keyNumber) {
+        if (keyNumber == EXEPCTION_KEY){
+            if (file.delete()){
+                System.out.println("Token is wrong! Can't login!");
+                System.out.println("Key File deleted!");
+                System.out.println("Creating new File...\n");
+            }
+        }
+        try {
+            if (file.createNewFile()) {
+                System.out.println("No Key File found!\n");
+                PrintWriter printWriter = new PrintWriter("Keys.txt");
+                Scanner sc;
+                String token;
+
+                /* Discord Token */
+                System.out.println("Enter your Discord-token: ");
+                sc = new Scanner(System.in);
+                token = sc.nextLine();
+                printWriter.println(token);
+
+
+                /*YouTube Token */
+                System.out.println("Enter your YouTube-token: ");
+                sc = new Scanner(System.in);
+                token = sc.nextLine();
+                printWriter.println(token);
+
+                printWriter.close();
+                System.out.println(file + " created\n");
+
+            }
+
+            BufferedReader bufferedReader = new BufferedReader(new FileReader("Keys.txt"));
+
+            if (keyNumber == DISCORD_KEY){
+                key = bufferedReader.readLine();
+            } else if (keyNumber == YOUTUBE_KEY){
+                key = bufferedReader.readLine();
+                key = bufferedReader.readLine();
+            }
+            bufferedReader.close();
+
+        } catch (IOException e) {
+            System.out.println(e.toString());
+            return null;
+        }
+        return key;
     }
 }
