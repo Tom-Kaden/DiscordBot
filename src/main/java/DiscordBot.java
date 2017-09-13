@@ -134,9 +134,9 @@ public class DiscordBot extends ListenerAdapter{
             BufferedReader bufferedReader = new BufferedReader(new FileReader("Keys.txt"));
 
             if (keyNumber == DISCORD_KEY){
-                key = bufferedReader.readLine();
+                key = bufferedReader.readLine();                                                                        //Once for the first Line
             } else if (keyNumber == YOUTUBE_KEY){
-                key = bufferedReader.readLine();
+                key = bufferedReader.readLine();                                                                        //Twice for the second Line
                 key = bufferedReader.readLine();
             }
             bufferedReader.close();
