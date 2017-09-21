@@ -15,14 +15,16 @@ import java.util.Scanner;
 
 public class DiscordBot extends ListenerAdapter{
 
+    private final static int EXEPCTION_KEY = 0;
+    private final static int YOUTUBE_KEY = 2;
+    private final static int DISCORD_KEY = 1;
+
     private static JDA jda = null;
     private static List<TextChannel> textChannels;
     private static MessageChannel channelBotLog;
     private static String key;
     private static File file = new File("Keys.txt");
-    private final static int EXEPCTION_KEY = 0;
-    private final static int DISCORD_KEY = 1;
-    private final static int YOUTUBE_KEY = 2;
+
 
     public static void main(String[] args) throws
             LoginException, RateLimitedException, InterruptedException {
@@ -96,7 +98,11 @@ public class DiscordBot extends ListenerAdapter{
         }
     }
 
+    /**************************************
 
+                    Methods
+
+     *************************************/
 
     private static String createToken(int keyNumber) {
         if (keyNumber == EXEPCTION_KEY){

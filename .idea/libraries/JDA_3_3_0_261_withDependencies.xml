@@ -1,7 +1,7 @@
 <component name="libraryTable">
   <library name="JDA-3.3.0_261-withDependencies">
     <CLASSES>
-      <root url="jar://$USER_HOME$/Downloads/JDA-3.3.0_261-withDependencies.jar!/" />
+      <root url="jar://$PROJECT_DIR$/src/main/resources/JDA-3.3.0_273-withDependencies.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
