@@ -1,3 +1,5 @@
+import at.mukprojects.giphy4j.Giphy;
+import at.mukprojects.giphy4j.entity.search.SearchRandom;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
@@ -16,12 +18,15 @@ import java.util.Scanner;
 public class DiscordBot extends ListenerAdapter{
 
     private final static int EXEPCTION_KEY = 0;
-    private final static int YOUTUBE_KEY = 2;
+    private final static int GIPHY_KEY = 2;
     private final static int DISCORD_KEY = 1;
 
     private static JDA jda = null;
     private static List<TextChannel> textChannels;
     private static MessageChannel channelBotLog;
+
+    private static Giphy giphy = null;
+
     private static String key;
     private static File file = new File("Keys.txt");
 
@@ -34,9 +39,11 @@ public class DiscordBot extends ListenerAdapter{
                     .setToken(createToken(DISCORD_KEY))
                     .addEventListener(new DiscordBot())
                     .buildBlocking();
-
             textChannels = jda.getTextChannels();
             channelBotLog = textChannels.get(0);
+
+            giphy = new Giphy(createToken(GIPHY_KEY));
+
         } catch (Exception e){
             createToken(EXEPCTION_KEY);
 
@@ -76,6 +83,14 @@ public class DiscordBot extends ListenerAdapter{
             PrivateChannel privateChannel = author.openPrivateChannel().complete();
             privateChannel.sendMessage("Private Message").complete();
         }
+        if (msg.startsWith("!meme")){
+            try {
+                SearchRandom searchRandom = giphy.searchRandom("cat");
+                channel.sendMessage(searchRandom.getData().getImageOriginalUrl()).complete();
+            } catch (Exception e){
+                System.out.println(e.toString());
+            }
+        }
         if (msg.startsWith("!log")){
             try {
                 StringBuilder stringBuilder = new StringBuilder();
@@ -86,14 +101,13 @@ public class DiscordBot extends ListenerAdapter{
                 List<Message> messageList = messageHistory.retrievePast(amount).complete();
                 Collections.reverse(messageList);
                 messageList.remove(messageList.size()-1);
-                stringBuilder.append("```\n");
                 for (Message aMessageList : messageList) {
                     stringBuilder.append(aMessageList.getAuthor().getName()).append(" - " ).append(aMessageList.getContent()).append("\n");
                 }
-                stringBuilder.append("```");
                 channelBotLog.sendMessage(stringBuilder.toString()).complete();
             } catch (Exception e){
-                channel.sendMessage("```Please enter the Correct Command:\n\n!log 'amount'```").complete();
+                System.out.println(e.toString());
+                channel.sendMessage("Please enter the Correct Command:\n\n!log 'amount'").complete();
             }
         }
     }
@@ -127,7 +141,7 @@ public class DiscordBot extends ListenerAdapter{
 
 
                 /*YouTube Token */
-                System.out.println("Enter your YouTube-token: ");
+                System.out.println("Enter your Giphy-token: ");
                 sc = new Scanner(System.in);
                 token = sc.nextLine();
                 printWriter.println(token);
@@ -141,7 +155,7 @@ public class DiscordBot extends ListenerAdapter{
 
             if (keyNumber == DISCORD_KEY){
                 key = bufferedReader.readLine();                                                                        //Once for the first Line
-            } else if (keyNumber == YOUTUBE_KEY){
+            } else if (keyNumber == GIPHY_KEY){
                 key = bufferedReader.readLine();                                                                        //Twice for the second Line
                 key = bufferedReader.readLine();
             }
